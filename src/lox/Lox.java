@@ -1,8 +1,10 @@
 package lox;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,13 +24,8 @@ public class Lox {
         }
     }
     private static void runFile(String filepath)  throws IOException {
-        var path = Path.of(filepath);
-
-            String fileContents = Files.readString(path);
-            for (String line : fileContents.split("\n")) {
-                run(line);
-                if (hadError) System.exit(65);
-            }
+        byte[] bytes = Files.readAllBytes(Paths.get(filepath));
+        run(new String(bytes, Charset.defaultCharset()));
     }
     private static void runPrompt() throws IOException {
         System.out.println("Welcome to Interactive Lox!!!");
@@ -40,17 +37,17 @@ public class Lox {
             hadError = false;
         }
     }
-    private static void run(String source){
-        lox.Scanner scanner = new lox.Scanner();
-        List<Token> tokens =  scanner.scanTokens(source);
-
+    private static void run(String source) {
+        lox.Scanner scanner = new lox.Scanner(source);
+        List<Token> tokens =  scanner.scanTokens();
+        System.out.println(tokens.size());
         // For now, just print the tokens.
         for (Token token : tokens) {
             System.out.println(token.toString());
         }
     }
 
-    private static void error(int line, String message){
+    static void error(int line, String message){
         System.err.println("Error: " + line + ": " + message);
         hadError = true;
     }
