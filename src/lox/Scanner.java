@@ -73,7 +73,6 @@ public class Scanner {
                     while(!isAtEnd()){
                         if(peek() == '\n') line++;
                         if(match('*') && match('/')) break;
-
                         advance();
                     }
                 } else{
@@ -150,8 +149,10 @@ public class Scanner {
     private void identifier(){
         while(!isAtEnd() && peek() != ' ') advance();
         String text = source.substring(start, current);
-        if(keywords.containsKey(text)){
-            addToken(TokenType.IDENTIFIER);
+        if(keywords.containsKey(text)) {
+            addToken(keywords.get(text));
+        } else{
+            addToken(TokenType.IDENTIFIER, text);
         }
     }
     private boolean isDigit(char c){
