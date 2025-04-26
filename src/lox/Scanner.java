@@ -147,7 +147,10 @@ public class Scanner {
         addToken(TokenType.STRING, source.substring(start+1, current-1));
     }
     private void identifier(){
-        while(!isAtEnd() && peek() != ' ') advance();
+        while(!isAtEnd() && peek() != ' ' && isAlphaNumeric(peek())) advance();
+        if(peek() != ' '){
+            Lox.error(line, "Illegal identifier.");
+        }
         String text = source.substring(start, current);
         if(keywords.containsKey(text)) {
             addToken(keywords.get(text));
@@ -160,6 +163,9 @@ public class Scanner {
     }
     private boolean isAlpha(char c){
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    }
+    private boolean isAlphaNumeric(char c){
+        return isAlpha(c) || isDigit(c);
     }
     private void number(){
         while(!isAtEnd() && isDigit(peek())){
